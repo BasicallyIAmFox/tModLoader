@@ -77,7 +77,7 @@ public sealed record class Model
 				InBelowSurface = 38,
 				InEvilBiome = 39,
 				NotInEvilBiome = ~InEvilBiome,
-				NotInHallowBiome = ~InHallow,
+				NotInHallow = ~InHallow,
 				NotInGraveyard = ~InGraveyard,
 				NotInUnderworld = ~InUnderworldHeight,
 
@@ -238,7 +238,8 @@ public sealed record class Model
 				WorldGenSilver = 130,
 				WorldGenTungsten = ~WorldGenSilver,
 				NightAfterEvilOrHardmode = 132,
-				MoonPhasesHalf0OrPreHardmode = 133,
+				MoonPhasesHalf1AndHardmode = 133,
+				MoonPhasesHalf0OrPreHardmode = ~MoonPhasesHalf1AndHardmode,
 				HardmodeOrFTW = 134,
 				InBeach2 = 135,
 				AtLeastXHealth = 136,

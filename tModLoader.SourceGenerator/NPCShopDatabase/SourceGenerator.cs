@@ -49,7 +49,7 @@ public sealed class SourceGenerator : IIncrementalGenerator
 				w.WriteLine("[global::System.Runtime.CompilerServices.CompilerGeneratedAttribute]");
 				w.WriteLine($"private static void RegisterVanillaShop{shopModel.Id}()");
 				using (w.WriteBlock()) {
-					w.WriteLine($"var npcShop = new global::Terraria.ModLoader.NPCShop({shopModel.Id});");
+					w.WriteLine($"var npcShop = new global::Terraria.ModLoader.NPCShop(_shopIdToNpcId[{shopModel.Id}], _shopNameFromNpcId[{shopModel.Id}] ?? \"Shop\");");
 
 					foreach (var item in shopModel.Items) {
 						if (item.Conditions.IsEmpty) {

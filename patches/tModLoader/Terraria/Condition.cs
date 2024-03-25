@@ -221,10 +221,53 @@ public sealed record Condition(LocalizedText Description, Func<bool> Predicate)
 	public static readonly Condition MoonPhases26 =				new("Conditions.MoonPhases26",				() => Main.moonPhase % 4 == 2);
 	public static readonly Condition MoonPhases37 =				new("Conditions.MoonPhases37",				() => Main.moonPhase % 4 == 3);
 
+	// Internal
+	internal static readonly Condition DownedB2B3HM = new Condition("Conditions.DownedB2B3HM", () => NPC.downedBoss2 || NPC.downedBoss3 || Main.hardMode);
+	internal static readonly Condition WorldGenSilver = new Condition("Conditions.WorldGenSilver", () => WorldGen.SavedOreTiers.Silver == TileID.Silver);
+	internal static readonly Condition WorldGenTungsten = new Condition("Conditions.WorldGenTungsten", () => WorldGen.SavedOreTiers.Silver == TileID.Tungsten);
+	internal static readonly Condition NightAfterEvilOrHardmode = new Condition("Conditions.NightAfterEvilOrHardmode", () => (NPC.downedBoss2 && !Main.dayTime) || Main.hardMode);
+	internal static readonly Condition MoonPhasesHalf1AndHardmode = new Condition("Conditions.MoonPhasesHalf1AndHardmode", () => Hardmode.IsMet() && MoonPhasesHalf1.IsMet());
+	internal static readonly Condition MoonPhasesHalf0OrPreHardmode = new Condition("Conditions.MoonPhasesHalf0OrPreHardmode", () => PreHardmode.IsMet() || MoonPhasesHalf0.IsMet());
+	internal static readonly Condition HardmodeOrFTW = new Condition("Conditions.HardmodeFTW", () => Main.hardMode || !Main.getGoodWorld);
+	internal static readonly Condition InBeach2 = new Condition("Conditions.InBeach", () => {
+		int num6 = (int)((Main.screenPosition.X + Main.screenWidth / 2) / 16f);
+		return (double)(Main.screenPosition.Y / 16f) < Main.worldSurface + 10.0 && (num6 < 380 || num6 > Main.maxTilesX - 380);
+	});
+	internal static readonly Condition AtLeastXHealth = new Condition(Language.GetText("Conditions.AtleastXHealth").WithFormatArgs(400), () => Main.LocalPlayer.ConsumedLifeCrystals == Player.LifeCrystalMax);
+	internal static readonly Condition AtLeastXMana = new Condition(Language.GetText("Conditions.AtleastXMana").WithFormatArgs(200), () => Main.LocalPlayer.ConsumedManaCrystals == Player.ManaCrystalMax);
+	internal static readonly Condition PlatinumCoin = new Condition("Conditions.PlatinumCoin", () => {
+		long coinValue = 0L;
+		for (int i = 0; i < Main.InventoryAmmoSlotsStart; i++) {
+			if (Main.LocalPlayer.inventory[i].type == ItemID.CopperCoin)
+				coinValue += Main.LocalPlayer.inventory[i].stack;
+			else if (Main.LocalPlayer.inventory[i].type == ItemID.SilverCoin)
+				coinValue += Main.LocalPlayer.inventory[i].stack * 100;
+			else if (Main.LocalPlayer.inventory[i].type == ItemID.GoldCoin)
+				coinValue += Main.LocalPlayer.inventory[i].stack * 10000;
+			else if (Main.LocalPlayer.inventory[i].type == ItemID.PlatinumCoin)
+				coinValue += Main.LocalPlayer.inventory[i].stack * 1000000;
+			if (coinValue >= 1000000) {
+				return true;
+			}
+		}
+
+		return false;
+	});
+	internal static readonly Condition StyleMoon = new Condition("Conditions.StyleMoon", () => Main.moonPhase % 2 == (!Main.dayTime).ToInt());
+	internal static readonly Condition OnTeam = new Condition("Conditions.OnTeam", () => Main.LocalPlayer.team != 0);
+	internal static readonly Condition NightDayFullMoon = new Condition("Conditions.NightDayFullMoon", () => !Main.dayTime || Main.moonPhase == 0);
+	internal static readonly Condition DaytimeNotFullMoon = new Condition("Conditions.DaytimeNotFullMoon", () => Main.dayTime && Main.moonPhase != 0);
+	internal static readonly Condition NoAteLoaf = new Condition("Conditions.NoAteLoaf", () => !Main.LocalPlayer.ateArtisanBread);
+	internal static readonly Condition Periodically1 = new Condition("Conditions.Periodically", () => Main.time % 60 <= 30);
+	internal static readonly Condition Periodically2 = new Condition("Conditions.Periodically", () => Main.time % 60 > 30);
+	internal static readonly Condition BestiaryFull = new Condition("Conditions.BestiaryFull", () => Main.GetBestiaryProgressReport().CompletionPercent >= 1f);
+
 	// Parameters
 	public static Condition PlayerCarriesItem(int itemId) => new(Language.GetText("Conditions.PlayerCarriesItem").WithFormatArgs(Lang.GetItemName(itemId)), () => Main.LocalPlayer.HasItem(itemId));
+	public static Condition PlayerCarriesItem(int itemId, int itemId2) => new(Language.GetText("Conditions.PlayerCarriesItem2").WithFormatArgs(Lang.GetItemName(itemId), Lang.GetItemName(itemId2)), () => Main.LocalPlayer.HasItem(itemId) || Main.LocalPlayer.HasItem(itemId2));
 	public static Condition GolfScoreOver(int score) => new(Language.GetText("Conditions.GolfScoreOver").WithFormatArgs(score), () => Main.LocalPlayer.golferScoreAccumulated >= score);
 	public static Condition NpcIsPresent(int npcId) => new(Language.GetText("Conditions.NpcIsPresent").WithFormatArgs(Lang.GetNPCName(npcId)), () => NPC.AnyNPCs(npcId));
 	public static Condition AnglerQuestsFinishedOver(int quests) => new(Language.GetText("Conditions.AnglerQuestsFinishedOver").WithFormatArgs(quests), () => Main.LocalPlayer.anglerQuestsFinished >= quests);
+	public static Condition BestiaryFilledPercent(int percent) => new(Language.GetText("Conditions.BestiaryPercentage").WithFormatArgs(percent), () => Main.GetBestiaryProgressReport().CompletionPercent >= percent / 100f);
 }
 			

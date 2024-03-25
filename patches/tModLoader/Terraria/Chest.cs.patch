@@ -633,7 +633,7 @@
  	public static void SetupTravelShop()
  	{
  		for (int i = 0; i < 40; i++) {
-@@ -1164,10 +_,17 @@
+@@ -1164,10 +_,18 @@
  				break;
  			}
  		}
@@ -646,11 +646,31 @@
 +		SetupShop(NPCShopDatabase.GetShopNameFromVanillaIndex(type), Main.LocalPlayer.TalkNPC);
 +	}
 +
++	[__InternalDoNotUseVanillaSetupShop]
 +	internal void VanillaSetupShop(int type)
 +	{
  		bool flag = Main.LocalPlayer.currentShoppingSettings.PriceAdjustment <= 0.8999999761581421;
  		Item[] array = item;
  		for (int i = 0; i < 40; i++) {
+@@ -1482,7 +_,8 @@
+ 							array[num++].SetDefaults(4437);
+ 							array[num++].SetDefaults(4438);
+ 							break;
+-						default:
++						//default:
++						case 3:
+ 							array[num++].SetDefaults(4439);
+ 							array[num++].SetDefaults(4440);
+ 							array[num++].SetDefaults(4441);
+@@ -2160,7 +_,7 @@
+ 						array[num].SetDefaults(1483);
+ 						num++;
+ 					}
+-					else {
++					else if (Main.moonPhase <= 7) { // TML: from `else` to `else if`
+ 						array[num].SetDefaults(1484);
+ 						num++;
+ 					}
 @@ -2313,12 +_,12 @@
  				num++;
  				array[num].SetDefaults(1979);

@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria.ID;
-using Terraria.Localization;
 
 using static Terraria.ModLoader.NPCShop;
 
@@ -61,6 +59,66 @@ public static partial class NPCShopDatabase
 		GetShopName(NPCID.BestiaryGirl),
 		GetShopName(NPCID.Princess),
 		GetShopName(NPCID.Painter, "Decor"),
+	};
+
+	// Used by source-generator.
+	private static readonly int[] _shopIdToNpcId = new[] {
+		0,
+		NPCID.Merchant,
+		NPCID.ArmsDealer,
+		NPCID.Dryad,
+		NPCID.Demolitionist,
+		NPCID.Clothier,
+		NPCID.GoblinTinkerer,
+		NPCID.Wizard,
+		NPCID.Mechanic,
+		NPCID.SantaClaus,
+		NPCID.Truffle,
+		NPCID.Steampunker,
+		NPCID.DyeTrader,
+		NPCID.PartyGirl,
+		NPCID.Cyborg,
+		NPCID.Painter,
+		NPCID.WitchDoctor,
+		NPCID.Pirate,
+		NPCID.Stylist,
+		NPCID.TravellingMerchant,
+		NPCID.SkeletonMerchant,
+		NPCID.DD2Bartender,
+		NPCID.Golfer,
+		NPCID.BestiaryGirl,
+		NPCID.Princess,
+		NPCID.Painter
+	};
+
+	// Used by source-generator.
+	private static readonly string[] _shopNameFromNpcId = new[] {
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		null,
+		"Decor"
 	};
 
 	public static string GetShopNameFromVanillaIndex(int index) => _vanillaShopNames[index];
@@ -221,9 +279,6 @@ public static partial class NPCShopDatabase
 
 	private static void RegisterMerchant()
 	{
-		var carriesFlareGun = Condition.PlayerCarriesItem(ItemID.FlareGun);
-		var drumSetCondition = new Condition("Conditions.DownedB2B3HM", () => NPC.downedBoss2 || NPC.downedBoss3 || Main.hardMode);
-
 		new NPCShop(NPCID.Merchant)
 			.Add(ItemID.MiningHelmet)
 			.Add(ItemID.PiggyBank)
@@ -246,13 +301,13 @@ public static partial class NPCShopDatabase
 			.Add(ItemID.Glowstick,			Condition.TimeNight)
 			.Add(ItemID.Safe,				Condition.DownedSkeletron)
 			.Add(ItemID.DiscoBall,			Condition.Hardmode)
-			.Add(ItemID.Flare,				carriesFlareGun)
-			.Add(ItemID.BlueFlare,			carriesFlareGun)
+			.Add(ItemID.Flare,				Condition.PlayerCarriesItem(ItemID.FlareGun))
+			.Add(ItemID.BlueFlare,			Condition.PlayerCarriesItem(ItemID.FlareGun))
 			.Add(ItemID.Sickle)
 			.Add(ItemID.GoldDust,			Condition.Hardmode)
 			.Add(ItemID.SharpeningStation,	Condition.Hardmode)
-			.Add(ItemID.DrumSet,			drumSetCondition)
-			.Add(ItemID.DrumStick,			drumSetCondition)
+			.Add(ItemID.DrumSet,			Condition.DownedB2B3HM)
+			.Add(ItemID.DrumStick,			Condition.DownedB2B3HM)
 			.Add(ItemID.Nail,				Condition.PlayerCarriesItem(ItemID.NailGun))
 			.Register();
 	}
@@ -261,9 +316,9 @@ public static partial class NPCShopDatabase
 	{
 		new NPCShop(NPCID.ArmsDealer)
 			.Add(ItemID.MusketBall)
-			.Add(ItemID.SilverBullet,			Condition.BloodMoonOrHardmode, new Condition("Conditions.WorldGenSilver", () => WorldGen.SavedOreTiers.Silver == TileID.Silver))
-			.Add(ItemID.TungstenBullet,			Condition.BloodMoonOrHardmode, new Condition("Conditions.WorldGenTungsten", () => WorldGen.SavedOreTiers.Silver == TileID.Tungsten))
-			.Add(ItemID.UnholyArrow,			new Condition("Conditions.NightAfterEvilOrHardmode", () => (NPC.downedBoss2 && !Main.dayTime) || Main.hardMode))
+			.Add(ItemID.SilverBullet,			Condition.BloodMoonOrHardmode, Condition.WorldGenSilver)
+			.Add(ItemID.TungstenBullet,			Condition.BloodMoonOrHardmode, Condition.WorldGenTungsten)
+			.Add(ItemID.UnholyArrow,			Condition.NightAfterEvilOrHardmode)
 			.Add(ItemID.FlintlockPistol)
 			.Add(ItemID.Minishark)
 			.Add(ItemID.QuadBarrelShotgun,		Condition.InGraveyard, Condition.DownedSkeletron)
@@ -359,8 +414,6 @@ public static partial class NPCShopDatabase
 
 	private static void RegisterClothier()
 	{
-		var taxCollectorIsPresent = Condition.NpcIsPresent(NPCID.TaxCollector);
-
 		new NPCShop(NPCID.Clothier)
 			.Add(ItemID.BlackThread)
 			.Add(ItemID.PinkThread)
@@ -384,9 +437,9 @@ public static partial class NPCShopDatabase
 			.Add(ItemID.WhiteLunaticRobe,				Condition.TimeDay, Condition.DownedCultist)
 			.Add(ItemID.BlueLunaticHood,				Condition.TimeNight, Condition.DownedCultist)
 			.Add(ItemID.BlueLunaticRobe,				Condition.TimeNight, Condition.DownedCultist)
-			.Add(ItemID.TaxCollectorHat,				taxCollectorIsPresent)
-			.Add(ItemID.TaxCollectorSuit,				taxCollectorIsPresent)
-			.Add(ItemID.TaxCollectorPants,				taxCollectorIsPresent)
+			.Add(ItemID.TaxCollectorHat,				Condition.NpcIsPresent(NPCID.TaxCollector))
+			.Add(ItemID.TaxCollectorSuit,				Condition.NpcIsPresent(NPCID.TaxCollector))
+			.Add(ItemID.TaxCollectorPants,				Condition.NpcIsPresent(NPCID.TaxCollector))
 			.Add(ItemID.UndertakerHat,					Condition.InGraveyard)
 			.Add(ItemID.UndertakerCoat,					Condition.InGraveyard)
 			.Add(ItemID.FuneralHat,						Condition.InGraveyard)
@@ -521,12 +574,11 @@ public static partial class NPCShopDatabase
 
 	private static void RegisterSteampunker()
 	{
-		var steampunkerOutfitCondition = new Condition("Conditions.MoonPhasesHalf0OrPreHardmode", () => Condition.PreHardmode.IsMet() || Condition.MoonPhasesHalf0.IsMet());
 		new NPCShop(NPCID.Steampunker)
 			.Add(ItemID.Clentaminator,		Condition.NotRemixWorld)
-			.Add(ItemID.SteampunkHat,		steampunkerOutfitCondition)
-			.Add(ItemID.SteampunkShirt,		steampunkerOutfitCondition)
-			.Add(ItemID.SteampunkPants,		steampunkerOutfitCondition)
+			.Add(ItemID.SteampunkHat,		Condition.MoonPhasesHalf0OrPreHardmode)
+			.Add(ItemID.SteampunkShirt,		Condition.MoonPhasesHalf0OrPreHardmode)
+			.Add(ItemID.SteampunkPants,		Condition.MoonPhasesHalf0OrPreHardmode)
 			.Add(ItemID.Jetpack,			Condition.Hardmode, Condition.MoonPhasesHalf1)
 			.Add(ItemID.SteampunkWings,		Condition.DownedGolem)
 			.Add(ItemID.StaticHook,			Condition.Hardmode)
@@ -541,7 +593,7 @@ public static partial class NPCShopDatabase
 			.Add(ItemID.LogicGateLamp_Faulty)
 			.Add(ItemID.ConveyorBeltLeft)
 			.Add(ItemID.ConveyorBeltRight)
-			.Add(ItemID.BlendOMatic,		new Condition("Conditions.HardmodeFTW", () => Main.hardMode || !Main.getGoodWorld))
+			.Add(ItemID.BlendOMatic,		Condition.HardmodeOrFTW)
 			.Add(ItemID.SteampunkBoiler,	Condition.DownedEyeOfCthulhu, Condition.DownedEowOrBoc, Condition.DownedSkeletron)
 			.Add(ItemID.FleshCloningVaat,	Condition.CrimsonWorld)
 			.Add(ItemID.LesionStation,		Condition.CorruptWorld)
@@ -627,9 +679,6 @@ public static partial class NPCShopDatabase
 
 	private static void RegisterCyborg()
 	{
-		var portalGunStation = new Condition(Language.GetText("Conditions.PlayerCarriesItem2").WithFormatArgs(Lang.GetItemName(ItemID.PortalGun), Lang.GetItemName(ItemID.PortalGunStation)),
-			() => Main.LocalPlayer.HasItem(ItemID.PortalGun) || Main.LocalPlayer.HasItem(ItemID.PortalGunStation));
-
 		new NPCShop(NPCID.Cyborg)
 			.Add(ItemID.RocketI)
 			.Add(ItemID.RocketII,				Condition.BloodMoon)
@@ -649,7 +698,7 @@ public static partial class NPCShopDatabase
 			.Add(ItemID.CyborgPants,			Condition.Halloween)
 			.Add(ItemID.HiTekSunglasses,		Condition.DownedMartians)
 			.Add(ItemID.NightVisionHelmet,		Condition.DownedMartians)
-			.Add(ItemID.PortalGunStation,		portalGunStation)
+			.Add(ItemID.PortalGunStation,		Condition.PlayerCarriesItem(ItemID.PortalGun, ItemID.PortalGun))
 			.Register();
 	}
 
@@ -761,11 +810,6 @@ public static partial class NPCShopDatabase
 
 	private static void RegisterPirate()
 	{
-		var beachCondition = new Condition("Conditions.InBeach", () => {
-			int num6 = (int)((Main.screenPosition.X + Main.screenWidth / 2) / 16f);
-			return (double)(Main.screenPosition.Y / 16f) < Main.worldSurface + 10.0 && (num6 < 380 || num6 > Main.maxTilesX - 380);
-		});
-
 		new NPCShop(NPCID.Pirate)
 			.Add(ItemID.Cannon)
 			.Add(ItemID.Cannonball)
@@ -773,43 +817,21 @@ public static partial class NPCShopDatabase
 			.Add(ItemID.PirateShirt)
 			.Add(ItemID.PiratePants)
 			.Add(ItemID.Sail)
-			.Add(ItemID.ParrotCracker,	beachCondition)
+			.Add(ItemID.ParrotCracker,	Condition.InBeach2)
 			.Add(ItemID.BunnyCannon,	Condition.NpcIsPresent(NPCID.PartyGirl), Condition.Hardmode, Condition.DownedMechBossAny)
 			.Register();
 	}
 
 	private static void RegisterStylist()
 	{
-		var maxLife = new Condition(Language.GetText("Conditions.AtleastXHealth").WithFormatArgs(400), () => Main.LocalPlayer.ConsumedLifeCrystals == Player.LifeCrystalMax);
-		var maxMana = new Condition(Language.GetText("Conditions.AtleastXMana").WithFormatArgs(200), () => Main.LocalPlayer.ConsumedManaCrystals == Player.ManaCrystalMax);
-		var moneyHair = new Condition("Conditions.PlatinumCoin", () => {
-			long coinValue = 0L;
-			for (int i = 0; i < Main.InventoryAmmoSlotsStart; i++) {
-				if (Main.LocalPlayer.inventory[i].type == ItemID.CopperCoin)
-					coinValue += Main.LocalPlayer.inventory[i].stack;
-				else if (Main.LocalPlayer.inventory[i].type == ItemID.SilverCoin)
-					coinValue += Main.LocalPlayer.inventory[i].stack * 100;
-				else if (Main.LocalPlayer.inventory[i].type == ItemID.GoldCoin)
-					coinValue += Main.LocalPlayer.inventory[i].stack * 10000;
-				else if (Main.LocalPlayer.inventory[i].type == ItemID.PlatinumCoin)
-					coinValue += Main.LocalPlayer.inventory[i].stack * 1000000;
-				if (coinValue >= 1000000) {
-					return true;
-				}
-			}
-			return false;
-		});
-		var timeHair = new Condition("Conditions.StyleMoon", () => Main.moonPhase % 2 == (!Main.dayTime).ToInt());
-		var teamHair = new Condition("Conditions.OnTeam", () => Main.LocalPlayer.team != 0);
-
 		new NPCShop(NPCID.Stylist)
 			.Add(ItemID.HairDyeRemover)
 			.Add(ItemID.DepthHairDye)
-			.Add(ItemID.LifeHairDye,		maxLife)
-			.Add(ItemID.ManaHairDye,		maxMana)
-			.Add(ItemID.MoneyHairDye,		moneyHair)
-			.Add(ItemID.TimeHairDye,		timeHair)
-			.Add(ItemID.TeamHairDye,		teamHair)
+			.Add(ItemID.LifeHairDye,		Condition.AtLeastXHealth)
+			.Add(ItemID.ManaHairDye,		Condition.AtLeastXMana)
+			.Add(ItemID.MoneyHairDye,		Condition.PlatinumCoin)
+			.Add(ItemID.TimeHairDye,		Condition.StyleMoon)
+			.Add(ItemID.TeamHairDye,		Condition.OnTeam)
 			.Add(ItemID.BiomeHairDye,		Condition.Hardmode)
 			.Add(ItemID.PartyHairDye,		Condition.NpcIsPresent(NPCID.PartyGirl))
 			.Add(ItemID.RainbowHairDye,		Condition.Hardmode, Condition.DownedTwins, Condition.DownedSkeletronPrime, Condition.DownedDestroyer)
@@ -822,14 +844,6 @@ public static partial class NPCShopDatabase
 
 	private static void RegisterSkeletonMerchant()
 	{
-		var spelunkerGlowCondition = new Condition("Conditions.NightDayFullMoon", () => !Main.dayTime || Main.moonPhase == 0);
-		var glowstickCondition = new Condition("Conditions.DaytimeNotFullMoon", () => Main.dayTime && Main.moonPhase != 0);
-		var artisanCondition = new Condition("Conditions.NoAteLoaf", () => !Main.LocalPlayer.ateArtisanBread);
-
-		// these two are probably a bug, meant to cycle every 3 minutes
-		var boneTorchCondition = new Condition("Conditions.Periodically", () => Main.time % 60 <= 30);
-		var torchCondition = new Condition("Conditions.Periodically", () => Main.time % 60 > 30);
-
 		new NPCShop(NPCID.SkeletonMerchant)
 			.Add(ItemID.WoodenBoomerang,		Condition.MoonPhaseFull)
 			.Add(ItemID.Umbrella,				Condition.MoonPhaseWaningGibbous)
@@ -843,11 +857,12 @@ public static partial class NPCShopDatabase
 			.Add(ItemID.StrangeBrew,			Condition.MoonPhasesEven)
 			.Add(ItemID.LesserHealingPotion,	Condition.MoonPhasesOdd)
 			.Add(ItemID.HealingPotion,			Condition.Hardmode, Condition.MoonPhasesOdd)
-			.Add(ItemID.SpelunkerGlowstick,		spelunkerGlowCondition)
-			.Add(ItemID.SpelunkerFlare,			spelunkerGlowCondition, Condition.PlayerCarriesItem(ItemID.FlareGun))
-			.Add(ItemID.Glowstick,				glowstickCondition)
-			.Add(ItemID.BoneTorch,				boneTorchCondition)
-			.Add(ItemID.Torch,					torchCondition)
+			.Add(ItemID.SpelunkerGlowstick,		Condition.NightDayFullMoon)
+			.Add(ItemID.SpelunkerFlare,			Condition.NightDayFullMoon, Condition.PlayerCarriesItem(ItemID.FlareGun))
+			.Add(ItemID.Glowstick,				Condition.DaytimeNotFullMoon)
+												// these two are probably a bug, meant to cycle every 3 minutes
+			.Add(ItemID.BoneTorch,				Condition.Periodically1)
+			.Add(ItemID.Torch,					Condition.Periodically2)
 			.Add(ItemID.BoneArrow,				Condition.MoonPhasesEvenQuarters)
 			.Add(ItemID.WoodenArrow,			Condition.MoonPhasesOddQuarters)
 			.Add(ItemID.BlueCounterweight,		Condition.MoonPhases04)
@@ -861,7 +876,7 @@ public static partial class NPCShopDatabase
 			.Add(ItemID.YoYoGlove,				Condition.Hardmode)
 			.Add(ItemID.SlapHand,				Condition.Hardmode, Condition.BloodMoon)
 			.Add(ItemID.MagicLantern,			Condition.TimeNight, Condition.MoonPhaseFull)
-			.Add(ItemID.ArtisanLoaf,			artisanCondition, Condition.MoonPhasesNearNew)
+			.Add(ItemID.ArtisanLoaf,			Condition.NoAteLoaf, Condition.MoonPhasesNearNew)
 			.Register();
 	}
 
@@ -992,37 +1007,35 @@ public static partial class NPCShopDatabase
 
 	private static void RegisterZoologist()
 	{
-		Condition BestiaryFilledPercent(int percent) => new(Language.GetText("Conditions.BestiaryPercentage").WithFormatArgs(percent), () => Main.GetBestiaryProgressReport().CompletionPercent >= percent/100f);
-
 		new NPCShop(NPCID.BestiaryGirl)
 			.Add(ItemID.FairyGlowstick,				new Condition("Conditions.BestiaryWinx", () => Chest.BestiaryGirl_IsFairyTorchAvailable()))
 			.Add(ItemID.DontHurtCrittersBook)
 			.Add(ItemID.SquirrelHook)
 			.Add(ItemID.TheWerewolf,				Condition.MoonPhaseFull, Condition.TimeNight)
-			.Add(ItemID.BlandWhip,					BestiaryFilledPercent(10))
+			.Add(ItemID.BlandWhip,					Condition.BestiaryFilledPercent(10))
 			.Add(ItemID.LicenseCat)
-			.Add(ItemID.LicenseDog,					BestiaryFilledPercent(25))
-			.Add(ItemID.LicenseBunny,				BestiaryFilledPercent(45))
-			.Add(ItemID.VanityTreeSakuraSeed,		BestiaryFilledPercent(30))
-			.Add(ItemID.VanityTreeYellowWillowSeed, BestiaryFilledPercent(30))
+			.Add(ItemID.LicenseDog,					Condition.BestiaryFilledPercent(25))
+			.Add(ItemID.LicenseBunny,				Condition.BestiaryFilledPercent(45))
+			.Add(ItemID.VanityTreeSakuraSeed,		Condition.BestiaryFilledPercent(30))
+			.Add(ItemID.VanityTreeYellowWillowSeed, Condition.BestiaryFilledPercent(30))
 			.Add(ItemID.KiteCrawltipede,			Condition.DownedSolarPillar)
-			.Add(ItemID.KiteKoi,					BestiaryFilledPercent(10))
-			.Add(ItemID.CritterShampoo,				BestiaryFilledPercent(30))
-			.Add(ItemID.MolluskWhistle,				BestiaryFilledPercent(25))
-			.Add(ItemID.PaintedHorseSaddle,			BestiaryFilledPercent(30))
-			.Add(ItemID.MajesticHorseSaddle,		BestiaryFilledPercent(30))
-			.Add(ItemID.DarkHorseSaddle,			BestiaryFilledPercent(30))
-			.Add(ItemID.JoustingLance,				BestiaryFilledPercent(30), Condition.Hardmode)
-			.Add(ItemID.DiggingMoleMinecart,		BestiaryFilledPercent(35))
-			.Add(ItemID.RabbitOrder,				BestiaryFilledPercent(40))
+			.Add(ItemID.KiteKoi,					Condition.BestiaryFilledPercent(10))
+			.Add(ItemID.CritterShampoo,				Condition.BestiaryFilledPercent(30))
+			.Add(ItemID.MolluskWhistle,				Condition.BestiaryFilledPercent(25))
+			.Add(ItemID.PaintedHorseSaddle,			Condition.BestiaryFilledPercent(30))
+			.Add(ItemID.MajesticHorseSaddle,		Condition.BestiaryFilledPercent(30))
+			.Add(ItemID.DarkHorseSaddle,			Condition.BestiaryFilledPercent(30))
+			.Add(ItemID.JoustingLance,				Condition.BestiaryFilledPercent(30), Condition.Hardmode)
+			.Add(ItemID.DiggingMoleMinecart,		Condition.BestiaryFilledPercent(35))
+			.Add(ItemID.RabbitOrder,				Condition.BestiaryFilledPercent(40))
 			.Add(ItemID.FullMoonSqueakyToy,			Condition.Hardmode, Condition.BloodMoon)
 			.Add(ItemID.MudBud,						Condition.DownedPlantera)
-			.Add(ItemID.TreeGlobe,					BestiaryFilledPercent(50))
-			.Add(ItemID.WorldGlobe,					BestiaryFilledPercent(50))
-			.Add(ItemID.MoonGlobe,					BestiaryFilledPercent(50))
-			.Add(ItemID.LightningCarrot,			BestiaryFilledPercent(50))
-			.Add(ItemID.BallOfFuseWire,				BestiaryFilledPercent(70))
-			.Add(ItemID.TeleportationPylonVictory,	new Condition("Conditions.BestiaryFull", () => Main.GetBestiaryProgressReport().CompletionPercent >= 1f))
+			.Add(ItemID.TreeGlobe,					Condition.BestiaryFilledPercent(50))
+			.Add(ItemID.WorldGlobe,					Condition.BestiaryFilledPercent(50))
+			.Add(ItemID.MoonGlobe,					Condition.BestiaryFilledPercent(50))
+			.Add(ItemID.LightningCarrot,			Condition.BestiaryFilledPercent(50))
+			.Add(ItemID.BallOfFuseWire,				Condition.BestiaryFilledPercent(70))
+			.Add(ItemID.TeleportationPylonVictory,	Condition.BestiaryFull)
 			.Add(ItemID.DogEars,					Condition.MoonPhasesQuarter0)
 			.Add(ItemID.DogTail,					Condition.MoonPhasesQuarter0)
 			.Add(ItemID.FoxEars,					Condition.MoonPhasesQuarter1)

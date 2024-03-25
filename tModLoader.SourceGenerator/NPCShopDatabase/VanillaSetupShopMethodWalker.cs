@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Linq;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -25,6 +27,10 @@ public sealed class VanillaSetupShopMethodWalker : CSharpSyntaxWalker
 					}
 				}
 			])
+				continue;
+
+			// Travelling Merchant and Bartender shops are NOT sane
+			if (shopId is 19 or 21)
 				continue;
 
 			currentShop = new Model.Shop.Builder(shopId);
@@ -58,7 +64,7 @@ public sealed class VanillaSetupShopMethodWalker : CSharpSyntaxWalker
 					]
 				},
 				Condition: BinaryExpressionSyntax {
-					RawKind: (int)SyntaxKind.LessThanExpression,
+					RawKind: (int)SyntaxKind.LessThanExpression or (int)SyntaxKind.LessThanOrEqualExpression,
 					Left: IdentifierNameSyntax {
 						Identifier.ValueText: var id2
 					},
@@ -66,7 +72,7 @@ public sealed class VanillaSetupShopMethodWalker : CSharpSyntaxWalker
 						RawKind: (int)SyntaxKind.NumericLiteralExpression,
 						Token.ValueText: var constantValue2
 					}
-				},
+				} conditionExpressionSyntax,
 				Incrementors:
 				[
 					PostfixUnaryExpressionSyntax {
@@ -153,8 +159,16 @@ public sealed class VanillaSetupShopMethodWalker : CSharpSyntaxWalker
 					}
 				}
 				else if (int.TryParse(constantValue1, out int fromItemId) && int.TryParse(constantValue2, out int toItemId)) {
-					for (int i = fromItemId; i < toItemId; i++)
-						currentShop.AddItem(new Model.Shop.Item(i, currentConditions.ToImmutableArray()));
+					bool useLessThanOrEqual = conditionExpressionSyntax.IsKind(SyntaxKind.LessThanOrEqualExpression);
+
+					if (useLessThanOrEqual) {
+						for (int i = fromItemId; i <= toItemId; i++)
+							currentShop.AddItem(new Model.Shop.Item(i, currentConditions.ToImmutableArray()));
+					}
+					else {
+						for (int i = fromItemId; i < toItemId; i++)
+							currentShop.AddItem(new Model.Shop.Item(i, currentConditions.ToImmutableArray()));
+					}
 				}
 
 				break;
@@ -175,15 +189,18 @@ public sealed class VanillaSetupShopMethodWalker : CSharpSyntaxWalker
 			currentConditions.Pop();
 
 		if (node.Else != null) {
-			foreach (var match in matches) {
-				match.TryInvert();
+			int count = 0;
 
-				currentConditions.Push(match.Condition);
+			foreach (var match in matches) {
+				if (match.TryInvert()) {
+					currentConditions.Push(match.Condition);
+					count++;
+				}
 			}
 
 			node.Else.Statement.Accept(this);
 
-			for (int i = 0; i < matches.Count; i++)
+			for (int i = 0; i < count; i++)
 				currentConditions.Pop();
 		}
 	}
@@ -234,7 +251,8 @@ public sealed class VanillaSetupShopMethodWalker : CSharpSyntaxWalker
 					Identifier.ValueText: var varId
 				},
 				Right: LiteralExpressionSyntax {
-					Token.ValueText: var upperLimitIdInclusiveStr
+					RawKind: (int)SyntaxKind.NumericLiteralExpression,
+					Token.Value: int upperLimitIdInclusive
 				}
 			},
 			Right: BinaryExpressionSyntax {
@@ -243,24 +261,32 @@ public sealed class VanillaSetupShopMethodWalker : CSharpSyntaxWalker
 					Identifier.ValueText: "num"
 				},
 				Right: LiteralExpressionSyntax {
-					Token.ValueText: "39"
+					RawKind: (int)SyntaxKind.NumericLiteralExpression,
+					Token.Value: 39
 				}
 			}
 		}) {
-			var varDeclNode = node.FirstAncestorOrSelf<VariableDeclaratorSyntax>(x => x.Identifier.ValueText.Equals(varId));
+			var varDeclNode = node.Parent.DescendantNodes()
+				.OfType<LocalDeclarationStatementSyntax>()
+				.Where(x => x.Declaration.Variables is [ var variable ] && variable.Identifier.ValueText.Equals(varId))
+				.First();
 
 			if (varDeclNode is {
-				Initializer: EqualsValueClauseSyntax {
-					Value: LiteralExpressionSyntax {
-						Token.ValueText: var lowerLimitIdInclusiveStr
+				Declaration.Variables:
+				[
+					{
+						Initializer: EqualsValueClauseSyntax {
+							Value: LiteralExpressionSyntax {
+								Token.Value: int lowerLimitIdInclusive
+							}
+						}
 					}
-				}
+				]
 			}) {
-				if (int.TryParse(lowerLimitIdInclusiveStr, out int lowerLimitIdInclusive) && int.TryParse(upperLimitIdInclusiveStr, out int upperLimitIdInclusive)) {
-					int i = lowerLimitIdInclusive;
-					while (i <= upperLimitIdInclusive) {
-						currentShop.AddItem(new Model.Shop.Item(i, currentConditions.ToImmutableArray()));
-					}
+				int i = lowerLimitIdInclusive;
+				while (i <= upperLimitIdInclusive) {
+					currentShop.AddItem(new Model.Shop.Item(i, currentConditions.ToImmutableArray()));
+					i++;
 				}
 			}
 		}

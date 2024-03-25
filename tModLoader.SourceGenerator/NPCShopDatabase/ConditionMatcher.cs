@@ -596,9 +596,6 @@ public static class ConditionMatcher
 			case BinaryExpressionSyntax {
 				RawKind: (int)SyntaxKind.LessThanExpression,
 				Left: CastExpressionSyntax {
-					Type: PredefinedTypeSyntax {
-						Keyword.RawKind: (int)SyntaxKind.DoubleKeyword
-					},
 					Expression: ParenthesizedExpressionSyntax {
 						Expression: BinaryExpressionSyntax {
 							RawKind: (int)SyntaxKind.DivideExpression,
@@ -629,7 +626,7 @@ public static class ConditionMatcher
 							},
 							Right: LiteralExpressionSyntax {
 								RawKind: (int)SyntaxKind.NumericLiteralExpression,
-								Token.ValueText: "16f"
+								Token.Value: 16f
 							}
 						}
 					}
@@ -643,7 +640,7 @@ public static class ConditionMatcher
 						Name.Identifier.ValueText: "worldSurface"
 					},
 					Right: LiteralExpressionSyntax {
-						Token.ValueText: "0.3499999940395355"
+						Token.Value: 0.3499999940395355
 					}
 				}
 			}:
@@ -1322,11 +1319,26 @@ public static class ConditionMatcher
 					},
 					Name.Identifier.ValueText: "bloodMoon"
 				},
-				Right:MemberAccessExpressionSyntax {
+				Right: MemberAccessExpressionSyntax {
 					Expression: IdentifierNameSyntax {
 						Identifier.ValueText: "Main"
 					},
 					Name.Identifier.ValueText: "eclipse"
+				}
+			}:
+			case BinaryExpressionSyntax {
+				RawKind: (int)SyntaxKind.LogicalOrExpression,
+				Left: MemberAccessExpressionSyntax {
+					Expression: IdentifierNameSyntax {
+						Identifier.ValueText: "Main"
+					},
+					Name.Identifier.ValueText: "eclipse"
+				},
+				Right: MemberAccessExpressionSyntax {
+					Expression: IdentifierNameSyntax {
+						Identifier.ValueText: "Main"
+					},
+					Name.Identifier.ValueText: "bloodMoon"
 				}
 			}:
 				match = new(new(Model.Shop.Condition.ConditionType.EclipseOrBloodMoon));
@@ -2572,6 +2584,94 @@ public static class ConditionMatcher
 			}:
 				match = new(new(Model.Shop.Condition.ConditionType.MoonPhasesOddQuarters));
 				break;
+			case BinaryExpressionSyntax {
+				RawKind: (int)SyntaxKind.EqualsExpression,
+				Left: BinaryExpressionSyntax {
+					RawKind: (int)SyntaxKind.ModuloExpression,
+					Left: MemberAccessExpressionSyntax {
+						Expression: IdentifierNameSyntax {
+							Identifier.ValueText: "Main"
+						},
+						Name.Identifier.ValueText: "moonPhase"
+					},
+					Right: LiteralExpressionSyntax {
+						RawKind: (int)SyntaxKind.NumericLiteralExpression,
+						Token.Value: 4
+					}
+				},
+				Right: LiteralExpressionSyntax {
+					RawKind: (int)SyntaxKind.NumericLiteralExpression,
+					Token.Value: 0
+				}
+			}:
+				match = new(new(Model.Shop.Condition.ConditionType.MoonPhases04));
+				break;
+			case BinaryExpressionSyntax {
+				RawKind: (int)SyntaxKind.EqualsExpression,
+				Left: BinaryExpressionSyntax {
+					RawKind: (int)SyntaxKind.ModuloExpression,
+					Left: MemberAccessExpressionSyntax {
+						Expression: IdentifierNameSyntax {
+							Identifier.ValueText: "Main"
+						},
+						Name.Identifier.ValueText: "moonPhase"
+					},
+					Right: LiteralExpressionSyntax {
+						RawKind: (int)SyntaxKind.NumericLiteralExpression,
+						Token.Value: 4
+					}
+				},
+				Right: LiteralExpressionSyntax {
+					RawKind: (int)SyntaxKind.NumericLiteralExpression,
+					Token.Value: 1
+				}
+			}:
+				match = new(new(Model.Shop.Condition.ConditionType.MoonPhases15));
+				break;
+			case BinaryExpressionSyntax {
+				RawKind: (int)SyntaxKind.EqualsExpression,
+				Left: BinaryExpressionSyntax {
+					RawKind: (int)SyntaxKind.ModuloExpression,
+					Left: MemberAccessExpressionSyntax {
+						Expression: IdentifierNameSyntax {
+							Identifier.ValueText: "Main"
+						},
+						Name.Identifier.ValueText: "moonPhase"
+					},
+					Right: LiteralExpressionSyntax {
+						RawKind: (int)SyntaxKind.NumericLiteralExpression,
+						Token.Value: 4
+					}
+				},
+				Right: LiteralExpressionSyntax {
+					RawKind: (int)SyntaxKind.NumericLiteralExpression,
+					Token.Value: 2
+				}
+			}:
+				match = new(new(Model.Shop.Condition.ConditionType.MoonPhases26));
+				break;
+			case BinaryExpressionSyntax {
+				RawKind: (int)SyntaxKind.EqualsExpression,
+				Left: BinaryExpressionSyntax {
+					RawKind: (int)SyntaxKind.ModuloExpression,
+					Left: MemberAccessExpressionSyntax {
+						Expression: IdentifierNameSyntax {
+							Identifier.ValueText: "Main"
+						},
+						Name.Identifier.ValueText: "moonPhase"
+					},
+					Right: LiteralExpressionSyntax {
+						RawKind: (int)SyntaxKind.NumericLiteralExpression,
+						Token.Value: 4
+					}
+				},
+				Right: LiteralExpressionSyntax {
+					RawKind: (int)SyntaxKind.NumericLiteralExpression,
+					Token.Value: 3
+				}
+			}:
+				match = new(new(Model.Shop.Condition.ConditionType.MoonPhases37));
+				break;
 
 			case BinaryExpressionSyntax {
 				RawKind: (int)SyntaxKind.LogicalOrExpression,
@@ -2647,6 +2747,30 @@ public static class ConditionMatcher
 				}
 			}:
 				match = new(new(Model.Shop.Condition.ConditionType.NightAfterEvilOrHardmode));
+				break;
+			case BinaryExpressionSyntax {
+				RawKind: (int)SyntaxKind.LogicalAndExpression,
+				Left: BinaryExpressionSyntax {
+					RawKind: (int)SyntaxKind.GreaterThanOrEqualExpression,
+					Left: MemberAccessExpressionSyntax {
+						Expression: IdentifierNameSyntax {
+							Identifier.ValueText: "Main"
+						},
+						Name.Identifier.ValueText: "moonPhase"
+					},
+					Right: LiteralExpressionSyntax {
+						RawKind: (int)SyntaxKind.NumericLiteralExpression,
+						Token.Value: 4
+					}
+				},
+				Right: MemberAccessExpressionSyntax {
+					Expression: IdentifierNameSyntax {
+						Identifier.ValueText: "Main"
+					},
+					Name.Identifier.ValueText: "hardMode"
+				}
+			}:
+				match = new(new(Model.Shop.Condition.ConditionType.MoonPhasesHalf1AndHardmode));
 				break;
 			case BinaryExpressionSyntax {
 				RawKind: (int)SyntaxKind.LogicalOrExpression,
@@ -2732,6 +2856,55 @@ public static class ConditionMatcher
 				}
 			}:
 				match = new(new(Model.Shop.Condition.ConditionType.InBeach2));
+				break;
+			case BinaryExpressionSyntax {
+				RawKind: (int)SyntaxKind.EqualsExpression,
+				Left: MemberAccessExpressionSyntax {
+					Expression: MemberAccessExpressionSyntax {
+						Expression: IdentifierNameSyntax {
+							Identifier.ValueText: "Main"
+						},
+						Name.Identifier.ValueText: "LocalPlayer"
+					},
+					Name.Identifier.ValueText: "ConsumedLifeCrystals"
+				},
+				Right: MemberAccessExpressionSyntax {
+					Expression: IdentifierNameSyntax {
+						Identifier.ValueText: "Player"
+					},
+					Name.Identifier.ValueText: "LifeCrystalMax"
+				}
+			}:
+				match = new(new(Model.Shop.Condition.ConditionType.AtLeastXHealth));
+				break;
+			case BinaryExpressionSyntax {
+				RawKind: (int)SyntaxKind.EqualsExpression,
+				Left: MemberAccessExpressionSyntax {
+					Expression: MemberAccessExpressionSyntax {
+						Expression: IdentifierNameSyntax {
+							Identifier.ValueText: "Main"
+						},
+						Name.Identifier.ValueText: "LocalPlayer"
+					},
+					Name.Identifier.ValueText: "ConsumedManaCrystals"
+				},
+				Right: MemberAccessExpressionSyntax {
+					Expression: IdentifierNameSyntax {
+						Identifier.ValueText: "Player"
+					},
+					Name.Identifier.ValueText: "ManaCrystalMax"
+				}
+			}:
+				match = new(new(Model.Shop.Condition.ConditionType.AtLeastXMana));
+				break;
+			case BinaryExpressionSyntax {
+				RawKind: (int)SyntaxKind.GreaterThanOrEqualExpression,
+				Left: IdentifierNameSyntax,
+				Right: LiteralExpressionSyntax {
+					Token.Value: 1000000
+				}
+			}:
+				match = new(new(Model.Shop.Condition.ConditionType.PlatinumCoin));
 				break;
 			case BinaryExpressionSyntax {
 				RawKind: (int)SyntaxKind.LogicalOrExpression,
@@ -2833,6 +3006,38 @@ public static class ConditionMatcher
 				}
 			}:
 				match = new(new(Model.Shop.Condition.ConditionType.OnTeam));
+				break;
+			case BinaryExpressionSyntax {
+				RawKind: (int)SyntaxKind.LessThanOrEqualExpression,
+				Left: BinaryExpressionSyntax {
+					RawKind: (int)SyntaxKind.MultiplyExpression,
+					Left: BinaryExpressionSyntax {
+						RawKind: (int)SyntaxKind.MultiplyExpression,
+						Left: BinaryExpressionSyntax {
+							RawKind: (int)SyntaxKind.ModuloExpression,
+							Left: MemberAccessExpressionSyntax {
+								Expression: IdentifierNameSyntax {
+									Identifier.ValueText: "Main"
+								},
+								Name.Identifier.ValueText: "time"
+							},
+							Right: LiteralExpressionSyntax {
+								Token.Value: 60.0
+							}
+						},
+						Right: LiteralExpressionSyntax {
+							Token.Value: 60.0
+						}
+					},
+					Right: LiteralExpressionSyntax {
+						Token.Value: 6.0
+					}
+				},
+				Right: LiteralExpressionSyntax {
+					Token.Value: 10800.0
+				}
+			}:
+				match = new(new(Model.Shop.Condition.ConditionType.Periodically1));
 				break;
 
 			case InvocationExpressionSyntax {
@@ -2944,6 +3149,30 @@ public static class ConditionMatcher
 				break;
 			}
 			case BinaryExpressionSyntax {
+				RawKind: (int)SyntaxKind.LogicalAndExpression,
+				Left: BinaryExpressionSyntax {
+					RawKind: (int)SyntaxKind.LessThanExpression,
+					Left: IdentifierNameSyntax,
+					Right: LiteralExpressionSyntax {
+						RawKind: (int)SyntaxKind.NumericLiteralExpression,
+						Token.Value: 38
+					}
+				},
+				Right: BinaryExpressionSyntax {
+					RawKind: (int)SyntaxKind.GreaterThanExpression or (int)SyntaxKind.GreaterThanOrEqualExpression,
+					Left: IdentifierNameSyntax {
+						Identifier.ValueText: ['g', 'o', 'l', 'f', 'e', 'r', 'S', 'c', 'o', 'r', 'e', 'A', 'c', 'c', 'u', 'm', 'u', 'l', 'a', 't', 'e', 'd', ..]
+					},
+					Right: LiteralExpressionSyntax {
+						RawKind: (int)SyntaxKind.NumericLiteralExpression,
+						Token.Value: int golfScoreAtleast
+					}
+				}
+			}: {
+				match = new(new(Model.Shop.Condition.ConditionType.GolfScoreOver, Data1: golfScoreAtleast));
+				break;
+			}
+			case BinaryExpressionSyntax {
 				RawKind: (int)SyntaxKind.GreaterThanExpression or (int)SyntaxKind.GreaterThanOrEqualExpression,
 				Left: IdentifierNameSyntax {
 					Identifier.ValueText: ['g', 'o', 'l', 'f', 'e', 'r', 'S', 'c', 'o', 'r', 'e', 'A', 'c', 'c', 'u', 'm', 'u', 'l', 'a', 't', 'e', 'd', .. ]
@@ -2952,13 +3181,52 @@ public static class ConditionMatcher
 					RawKind: (int)SyntaxKind.NumericLiteralExpression,
 					Token.Value: int golfScoreAtleast
 				}
-			}:
+			}: {
 				match = new(new(Model.Shop.Condition.ConditionType.GolfScoreOver, Data1: golfScoreAtleast));
 				break;
+			}
+			case BinaryExpressionSyntax {
+				RawKind: (int)SyntaxKind.GreaterThanExpression or (int)SyntaxKind.GreaterThanOrEqualExpression,
+				Left: MemberAccessExpressionSyntax {
+					Expression: ElementAccessExpressionSyntax {
+						Expression: MemberAccessExpressionSyntax {
+							Expression: IdentifierNameSyntax {
+								Identifier.ValueText: "Main"
+							},
+							Name.Identifier.ValueText: "player"
+						},
+						ArgumentList.Arguments:
+						[
+							{
+								Expression: MemberAccessExpressionSyntax {
+									Expression: IdentifierNameSyntax {
+										Identifier.ValueText: "Main"
+									},
+									Name.Identifier.ValueText: "myPlayer"
+								}
+							}
+						]
+					}
+					or MemberAccessExpressionSyntax {
+						Expression: IdentifierNameSyntax {
+							Identifier.ValueText: "Main"
+						},
+						Name.Identifier.ValueText: "LocalPlayer"
+					},
+					Name.Identifier.ValueText: "golferScoreAccumulated"
+				},
+				Right: LiteralExpressionSyntax {
+					RawKind: (int)SyntaxKind.NumericLiteralExpression,
+					Token.Value: int golfScoreAtleast
+				}
+			}: {
+				match = new(new(Model.Shop.Condition.ConditionType.GolfScoreOver, Data1: golfScoreAtleast));
+				break;
+			}
 			case InvocationExpressionSyntax {
 				Expression: MemberAccessExpressionSyntax {
 					Expression: IdentifierNameSyntax {
-						Identifier.ValueText: "Main"
+						Identifier.ValueText: "NPC"
 					},
 					Name.Identifier.ValueText: "AnyNPCs"
 				},
@@ -2988,17 +3256,15 @@ public static class ConditionMatcher
 					Token.Value: float percent
 				}
 			}: {
-				if (percent < 1f)
-					match = new(new(Model.Shop.Condition.ConditionType.BestiaryFilledPercent, Data1: (int)(percent * 100f)));
-				else
-					match = new(new(Model.Shop.Condition.ConditionType.BestiaryFull));
+				match = percent < 1f
+					? new(new(Model.Shop.Condition.ConditionType.BestiaryFilledPercent, Data1: (int)(percent * 100f)))
+					: new(new(Model.Shop.Condition.ConditionType.BestiaryFull));
 				break;
 			}
 		}
 
 		if (shouldBeInverted) {
-			var result = match?.TryInvert();
-			Debug.Assert(result is true);
+			match?.TryInvert();
 		}
 
 		return match != default && Enum.IsDefined(typeof(Model.Shop.Condition.ConditionType), match.Condition.Type);
