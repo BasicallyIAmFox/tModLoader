@@ -59,6 +59,10 @@ public partial class Main
 	/// </summary>
 	public static Color DiscoColor => new Color(DiscoR, DiscoG, DiscoB);
 	/// <summary>
+	/// A fiery red color.
+	/// </summary>
+	public static Color MasterColor => new Color(255, (int)(masterColor * 200), 0);
+	/// <summary>
 	/// The typical pulsing white color used for much of the text shown in-game.
 	/// </summary>
 	public static Color MouseTextColorReal => new Color(mouseTextColor / 255f, mouseTextColor / 255f, mouseTextColor / 255f, mouseTextColor / 255f);
