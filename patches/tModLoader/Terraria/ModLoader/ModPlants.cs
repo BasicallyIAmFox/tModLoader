@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using Terraria.ID;
 using Terraria.GameContent;
 using Terraria.Enums;
+using System;
+using Terraria.Map;
 
 namespace Terraria.ModLoader;
 
@@ -149,6 +151,8 @@ public abstract class ModCactus : IPlant
 	public int PlantTileId => TileID.Cactus;
 	public int VanillaCount => 1;
 	public int[] GrowsOnTileId { get; set; }
+	public Color? MapColor { get; set; }
+
 	public abstract void SetStaticDefaults();
 	public abstract Asset<Texture2D> GetTexture();
 	public abstract Asset<Texture2D> GetFruitTexture();

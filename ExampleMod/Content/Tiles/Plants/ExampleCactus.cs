@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria.ModLoader;
 
@@ -11,6 +12,7 @@ namespace ExampleMod.Content.Tiles
 		public override void SetStaticDefaults() {
 			// Makes Example Cactus grow on ExampleOre
 			GrowsOnTileId = new int[1] { ModContent.TileType<ExampleOre>() };
+			MapColor = Color.White;
 			texture = ModContent.Request<Texture2D>("ExampleMod/Content/Tiles/Plants/ExampleCactus");
 		}
 

@@ -63,7 +63,7 @@ public abstract class ModTile : ModBlockType
 	{
 		if (!MapLoader.initialized) {
 			MapEntry entry = new MapEntry(color, name);
-			if (!MapLoader.tileEntries.Keys.Contains(Type)) {
+			if (!MapLoader.tileEntries.ContainsKey(Type)) {
 				MapLoader.tileEntries[Type] = new List<MapEntry>();
 			}
 			MapLoader.tileEntries[Type].Add(entry);

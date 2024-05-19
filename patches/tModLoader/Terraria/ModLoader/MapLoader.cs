@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.Map;
@@ -11,12 +12,13 @@ namespace Terraria.ModLoader;
 internal static class MapLoader
 {
 	internal static bool initialized = false;
-	internal static readonly IDictionary<ushort, IList<MapEntry>> tileEntries = new Dictionary<ushort, IList<MapEntry>>();
-	internal static readonly IDictionary<ushort, IList<MapEntry>> wallEntries = new Dictionary<ushort, IList<MapEntry>>();
-	internal static readonly IDictionary<ushort, Func<string, int, int, string>> nameFuncs =
-		new Dictionary<ushort, Func<string, int, int, string>>();
-	internal static readonly IDictionary<ushort, ushort> entryToTile = new Dictionary<ushort, ushort>();
-	internal static readonly IDictionary<ushort, ushort> entryToWall = new Dictionary<ushort, ushort>();
+	internal static readonly Dictionary<ushort, IList<MapEntry>> tileEntries = [];
+	internal static readonly Dictionary<ushort, IList<MapEntry>> wallEntries = [];
+	internal static readonly Dictionary<ushort, ushort> entryToTile = [];
+	internal static readonly Dictionary<ushort, ushort> entryToWall = [];
+	internal static readonly Dictionary<ModCactus, ushort> cactusToEntry = [];
+
+	internal static readonly Dictionary<ushort, Func<string, int, int, string>> nameFuncs = [];
 
 	internal static int modTileOptions(ushort type)
 	{
@@ -36,10 +38,13 @@ internal static class MapLoader
 		if (Main.dedServ) {
 			return;
 		}
+
 		Array.Resize(ref MapHelper.tileLookup, TileLoader.TileCount);
 		Array.Resize(ref MapHelper.wallLookup, WallLoader.WallCount);
-		IList<Color> colors = new List<Color>();
-		IList<LocalizedText> names = new List<LocalizedText>();
+
+		var colors = new List<Color>();
+		var names = new List<LocalizedText>();
+
 		foreach (ushort type in tileEntries.Keys) {
 			MapHelper.tileLookup[type] = (ushort)(MapHelper.modPosition + colors.Count);
 			foreach (MapEntry entry in tileEntries[type]) {
@@ -56,6 +61,7 @@ internal static class MapLoader
 				}
 			}
 		}
+
 		foreach (ushort type in wallEntries.Keys) {
 			MapHelper.wallLookup[type] = (ushort)(MapHelper.modPosition + colors.Count);
 			foreach (MapEntry entry in wallEntries[type]) {
@@ -72,6 +78,30 @@ internal static class MapLoader
 				}
 			}
 		}
+
+		{
+			var modCactiArray = ModContent.GetContent<ModCactus>().ToArray();
+			int oldLength = MapHelper.tileLookup.Length;
+
+			Array.Resize(ref MapHelper.tileLookup, oldLength + modCactiArray.Length);
+
+			for (int type = 0; type < modCactiArray.Length; type++) {
+				var cacti = modCactiArray[type];
+
+				ushort mapType = (ushort)(MapHelper.modPosition + colors.Count);
+				var color = cacti.MapColor ?? default;
+
+				MapHelper.tileLookup[oldLength + type] = mapType;
+
+				entryToTile[mapType] = (ushort)(oldLength + type);
+				nameFuncs[mapType] = (_, _, _) => Lang.GetMapObjectName(TileID.Cactus);
+				cactusToEntry[cacti] = mapType;
+
+				colors.Add(color);
+				names.Add(Lang._itemNameCache[ItemID.Cactus] /* TODO: Is Lang.GetMapObjectName available at this stage? */);
+			}
+		}
+
 		Array.Resize(ref MapHelper.colorLookup, MapHelper.modPosition + colors.Count);
 		Lang._mapLegendCache.Resize(MapHelper.modPosition + names.Count);
 		for (int k = 0; k < colors.Count; k++) {
@@ -91,6 +121,7 @@ internal static class MapLoader
 		nameFuncs.Clear();
 		entryToTile.Clear();
 		entryToWall.Clear();
+		cactusToEntry.Clear();
 		Array.Resize(ref MapHelper.tileLookup, TileID.Count);
 		Array.Resize(ref MapHelper.wallLookup, WallID.Count);
 		Array.Resize(ref MapHelper.colorLookup, MapHelper.modPosition);
@@ -101,16 +132,34 @@ internal static class MapLoader
 	//  MapLoader.ModMapOption(ref num16, i, j);
 	internal static void ModMapOption(ref ushort mapType, int i, int j)
 	{
-		if (entryToTile.ContainsKey(mapType)) {
-			ModTile tile = TileLoader.GetTile(entryToTile[mapType]);
+		if (mapType == MapHelper.TileToLookup(TileID.Cactus, 0)) {
+			var tile = Main.tile[i, j];
+
+			WorldGen.GetCactusType(i, j, tile.TileFrameX, tile.TileFrameY, out int sandType);
+
+			var cactus = PlantLoader.Get<ModCactus>(TileID.Cactus, sandType);
+			if (cactus != null) {
+				if (cactus.MapColor is null) {
+					mapType = (ushort)MapHelper.TileToLookup(TileID.Cactus, 0);
+				}
+				else {
+					mapType = cactusToEntry[cactus];
+				}
+
+				return;
+			}
+		}
+
+		if (entryToTile.TryGetValue(mapType, out ushort tileId)) {
+			ModTile tile = TileLoader.GetTile(tileId);
 			ushort option = tile.GetMapOption(i, j);
 			if (option < 0 || option >= modTileOptions(tile.Type)) {
 				throw new ArgumentOutOfRangeException("Bad map option for tile " + tile.Name + " from mod " + tile.Mod.Name);
 			}
 			mapType += option;
 		}
-		else if (entryToWall.ContainsKey(mapType)) {
-			ModWall wall = WallLoader.GetWall(entryToWall[mapType]);
+		else if (entryToWall.TryGetValue(mapType, out ushort wallId)) {
+			ModWall wall = WallLoader.GetWall(wallId);
 			ushort option = wall.GetMapOption(i, j);
 			if (option < 0 || option >= modWallOptions(wall.Type)) {
 				throw new ArgumentOutOfRangeException("Bad map option for wall " + wall.Name + " from mod " + wall.Mod.Name);
