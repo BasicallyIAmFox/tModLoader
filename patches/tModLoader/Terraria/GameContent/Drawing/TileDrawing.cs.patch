@@ -168,7 +168,7 @@
  	{
  		Texture2D result = TextureAssets.Tile[tile.type].Value;
  		int tileStyle = 0;
-@@ -1010,6 +_,25 @@
+@@ -1010,6 +_,40 @@
  				if (IsAlchemyPlantHarvestable(tile.frameX / 18))
  					num = 84;
  				Main.instance.LoadTiles(num);
@@ -191,6 +191,21 @@
 +						return asset.Value;
 +				}
 +
++				break;
++			// Cattail case added by TML.
++			case TileID.Cattail:
++				int y = tileY;
++				while (Main.tile[tileX, y].HasTile && Main.tile[tileX, y].TileType == TileID.Cattail) {
++					y++;
++				}
++
++				int floorType = Main.tile[tileX, y].TileType;
++				if (floorType >= 0 && TileLoader.CanGrowModCattail(floorType)) {
++					var cattail = TileLoader.GetCattailTexture(floorType);
++					if (cattail != null)
++						return cattail;
++				}
++
  				break;
  		}
  
@@ -203,7 +218,7 @@
  	{
  		Texture2D result = TextureAssets.Tile[tile.type].Value;
  		int tileStyle = 0;
-@@ -1036,6 +_,26 @@
+@@ -1036,6 +_,41 @@
  				if (IsAlchemyPlantHarvestable(tile.frameX / 18))
  					num = 84;
  				Main.instance.LoadTiles(num);
@@ -225,6 +240,21 @@
 +					var asset = PlantLoader.GetCactusFruitTexture(sandType);
 +					if (asset != null)
 +						return asset.Value;
++				}
++
++				break;
++			// This one is also TML code.
++			case TileID.Cattail:
++				int y = tileY;
++				while (Main.tile[tileX, y].HasTile && Main.tile[tileX, y].TileType == TileID.Cattail) {
++					y++;
++				}
++				
++				int floorType = Main.tile[tileX, y].TileType;
++				if (floorType >= 0 && TileLoader.CanGrowModCattail(floorType)) {
++					var cattail = TileLoader.GetCattailTexture(floorType);
++					if (cattail != null)
++						return cattail;
 +				}
 +
  				break;

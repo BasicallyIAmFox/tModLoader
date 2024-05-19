@@ -2036,6 +2036,28 @@
  
  		Item.NewItem(GetItemSource_FromTileBreak(i, j), i * 16, j * 16, 32, 32, chestItemDrop);
  		destroyObject = false;
+@@ -41637,6 +_,10 @@
+ 				break;
+ 		}
+ 
++		if (PlantLoader.Exists(TileID.Cattail, type)) {
++			num5 = 0;
++		}
++
+ 		if (num5 < 0)
+ 			return result;
+ 
+@@ -41724,6 +_,10 @@
+ 				break;
+ 		}
+ 
++		if (PlantLoader.Exists(TileID.Cattail, type)) {
++			num5 = 0;
++		}
++
+ 		if (!Main.tile[x, num2].nactive())
+ 			flag = true;
+ 
 @@ -42131,14 +_,30 @@
  		return false;
  	}

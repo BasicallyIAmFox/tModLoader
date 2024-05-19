@@ -138,6 +138,21 @@ public static class PlantLoader
 }
 
 /// <summary>
+/// This class represents a type of modded cattail.
+/// This class encapsulates a function for retrieving the cattail's texture and an array for type of soil it grows on.
+/// </summary>
+public abstract class ModCattail : IPlant
+{
+	public int PlantTileId => TileID.Cattail;
+	public int VanillaCount => VanillaStyleCount;
+	public const int VanillaStyleCount = 6;
+
+	public int[] GrowsOnTileId { get; set; }
+	public abstract void SetStaticDefaults();
+	public abstract Asset<Texture2D> GetTexture();
+}
+
+/// <summary>
 /// This class represents a type of modded cactus.
 /// This class encapsulates a function for retrieving the cactus's texture and an array for type of soil it grows on.
 /// </summary>

@@ -1123,9 +1123,23 @@ public static class TileLoader
 		return PlantLoader.Exists(TileID.Cactus, type) || TileIO.Tiles.unloadedTypes.Contains((ushort)type);
 	}
 
+	public static bool CanGrowModCattail(int type)
+	{
+		return PlantLoader.Exists(TileID.Cattail, type) || TileIO.Tiles.unloadedTypes.Contains((ushort)type);
+	}
+
 	public static Texture2D GetCactusTexture(int type)
 	{
 		var tree = PlantLoader.Get<ModCactus>(TileID.Cactus, type);
+		if (tree == null)
+			return null;
+
+		return tree.GetTexture().Value;
+	}
+
+	public static Texture2D GetCattailTexture(int type)
+	{
+		var tree = PlantLoader.Get<ModCattail>(TileID.Cattail, type);
 		if (tree == null)
 			return null;
 
